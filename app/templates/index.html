@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+        
+<div class="container is-max-desktop">
+        
+            <div class="columns is-desktop">
+
+                
+                <div class="column is-half-desktop">
+                    <div class="card">
+                        <div class="card-image">
+                            <figure class="image">
+                                <img src="{{ url_for('static', filename='catequista.jpg') }}">
+                            </figure>
+                        </div>
+                        <div class="card-content">
+                            <a class="button is-large is-fullwidth is-info mb-2" href="{{ url_for('verano') }}">
+                                Registro para Catequistas
+                            </a>
+                            <a class="button is-large is-fullwidth is-success mt-2" href="{{ url_for('entrar') }}">
+                                Entrar al Perfil de Catequista
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="column is-half-desktop">
+                    <div class="card">
+                        <div class="card-image">
+                            <figure class="image">
+                                <img src="{{ url_for('static', filename='ev.png') }}">
+                            </figure>
+                        </div>
+                        <div class="card-content">
+                            <a class="button is-large is-fullwidth is-info mb-2" href="{{ url_for('evangelizacion') }}">
+                                Registro para Evangelizadores
+                            </a>
+                            <a class="button is-large is-fullwidth is-success mt-2" href="{{ url_for('entrar_ev') }}">
+                                Entrar al Perfil de Evangelizador
+                            </a>
+                        </div>
+                    </div>
+                </div>
+               
+            
+            </div>
+        
+</div>
+{% endblock %}

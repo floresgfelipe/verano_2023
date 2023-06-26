@@ -1,0 +1,55 @@
+{% extends 'base-admin.html' %}
+
+{% block content %}
+
+<div>
+    <h1 class="title is-1">Evangelizadores</h1>
+    <hr>
+    <div id="table"></div>current_user
+</div>
+<script>
+    new gridjs.Grid({
+      columns: [
+        { id: 'id', name: 'ID' },
+        { id: 'nombres', name: 'Nombre(s)' },
+        { id: 'apellido_p', name: 'Apellido Paterno' },
+        { id: 'apellido_m', name: 'Apellido Materno' },
+        { id: 'fecha_nac', name: 'Fecha de Nacimiento' },
+        { id: 'decanato', name: 'Decanato' },
+        { id: 'parroquia', name: 'Parroquia' },
+        { id: 'telefono', name: 'Teléfono', sort: false },
+        { id: 'correo', name: 'E-mail', sort: false },
+        { id: 'foto', name: 'Foto', sort: false },
+      ],
+      data: [
+        {% for evangelizador in evangelizadores %}
+          {
+            id: '{{ evangelizador.id }}',
+            nombres: '{{ evangelizador.nombres }}',
+            apellido_p: '{{ evangelizador.apellido_p }}',
+            apellido_m: '{{ evangelizador.apellido_m }}',
+            fecha_nac: "{{ evangelizador.dia_nac ~ '-' ~ evangelizador.mes_nac ~ '-' ~ evangelizador.año_nac }}",
+            decanato: '{{ evangelizador.decanato }}',
+            parroquia: '{{ evangelizador.parroquia }}',
+            telefono: '{{ evangelizador.telefono }}',
+            correo: '{{ evangelizador.correo }}',
+            {% if evangelizador.foto != 'none' %}
+            foto: gridjs.html("<a href={{ url_for('fotos_admin_ev', filename=basename(evangelizador.foto)) }}>Foto</a>"),
+            {% else %}
+            foto: '',
+            {% endif %}
+          },
+        {% endfor %}
+      ],
+      search: true,
+      sort: true,
+      pagination: {
+        enabled: true,
+        limit: 15,
+        buttonsCount: 15,
+      }
+    }).render(document.getElementById('table'));
+</script>
+
+
+{% endblock %}
