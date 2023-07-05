@@ -115,16 +115,14 @@ class Admin(UserMixin, db.Model):
 
 @login.user_loader
 def load_user(id):
-    ad = Admin.query.get(int(id))
-    if ad: return ad
-
-    al = Alumno.query.get(int(id))
-    if al: return al
-
-    ev = Evangelizador.query.get(int(id))
-    if ev: return ev
-
-    return None
+    if session.get('account_type') == 'Admin':
+        return Admin.query.get(int(id))
+    elif session.get('account_type') == 'Alumno':
+        return Alumno.query.get(int(id))
+    elif session.get('account_type') == 'Evangelizador':
+        return Evangelizador.query.get(int(id))
+    else:
+        return None
 
 
 
