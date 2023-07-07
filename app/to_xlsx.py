@@ -1,6 +1,6 @@
 import os
 from app import app, db
-from app.models import Alumno
+from app.models import Alumno, Evangelizador
 
 import pandas as pd
 
@@ -41,6 +41,34 @@ def alumno_to_dict(alumno):
 
     return rt_dict
 
+def evangelizador_to_dict(evangelizador):
+    rt_dict = dict()
+
+    rt_dict['Nombre'] = (str(evangelizador.nombres) 
+                         + ' ' + str(evangelizador.apellido_p) 
+                         + ' ' + str(evangelizador.apellido_m))
+    
+
+    rt_dict['Fecha de Nacimiento'] = (str(evangelizador.dia_nac) 
+                                      + '/' + str(evangelizador.mes_nac) 
+                                      + '/' + str(evangelizador.año_nac))
+
+    rt_dict['Decanato'] = str(evangelizador.decanato)
+
+    rt_dict['Parroquia'] = str(evangelizador.parroquia)
+
+    rt_dict['Teléfono'] = int(evangelizador.telefono)
+
+    rt_dict['Correo'] = str(evangelizador.correo)
+
+    if evangelizador.foto != 'none':
+        rt_dict['Foto'] = ('https://catequesisver.org/fotos_admin_ev/' 
+                            + os.path.basename(evangelizador.foto))
+    else:
+        rt_dict['Foto'] = 'NO DISPONIBLE'
+
+
+    return rt_dict
 """
 def split_primero():
     alumnos_1o = Alumno.query.filter_by(grado=1).order_by(Alumno.id).all()
@@ -91,6 +119,17 @@ def alumnos_to_excel():
 
     writer.close()
 
+def evangelizador_to_excel():
+    evangelizadores = Evangelizador.query.all()
+    lista_evangelizadores = [evangelizador_to_dict(evangelizador) for evangelizador in evangelizadores]
+    df = pd.DataFrame(lista_evangelizadores)
+
+    filename = os.path.join(app.config['EXCEL_PATH'], 'lista_ev.xlsx')
+    writer = pd.ExcelWriter(filename)
+
+    df.to_excel(writer, sheet_name='Evangelizadores', index=False)
+
+    writer.close()
 
 
 
