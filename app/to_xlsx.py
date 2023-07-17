@@ -21,7 +21,7 @@ def alumno_to_dict(alumno):
 
     rt_dict['Parroquia'] = str(alumno.parroquia)
 
-    rt_dict['Teléfono'] = int(alumno.telefono)
+    rt_dict['Teléfono'] = int(alumno.telefono.replace(" ", ""))
 
     rt_dict['Correo'] = str(alumno.correo)
 
@@ -57,9 +57,11 @@ def evangelizador_to_dict(evangelizador):
 
     rt_dict['Parroquia'] = str(evangelizador.parroquia)
 
-    rt_dict['Teléfono'] = int(evangelizador.telefono)
+    rt_dict['Teléfono'] = int(evangelizador.telefono.replace(" ", ""))
 
     rt_dict['Correo'] = str(evangelizador.correo)
+
+    rt_dict['Grado'] = 'Evangelizador'
 
     if evangelizador.foto != 'none':
         rt_dict['Foto'] = ('https://catequesisver.org/fotos_admin_ev/' 
@@ -112,14 +114,14 @@ def alumnos_to_excel():
     writer = pd.ExcelWriter(filename)
 
     df.to_excel(writer, sheet_name='General', index=False)
-    df1.to_excel(writer, sheet_name='1A', index=False)
+    df1.to_excel(writer, sheet_name='1o', index=False)
     df2.to_excel(writer, sheet_name='2o', index=False)
     df3.to_excel(writer, sheet_name='3o', index=False)
     df4.to_excel(writer, sheet_name='Curso Esp.', index=False)
 
     writer.close()
 
-def evangelizador_to_excel():
+def evangelizadores_to_excel():
     evangelizadores = Evangelizador.query.all()
     lista_evangelizadores = [evangelizador_to_dict(evangelizador) for evangelizador in evangelizadores]
     df = pd.DataFrame(lista_evangelizadores)
