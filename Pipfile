@@ -13,6 +13,7 @@ flask-wtf = "*"
 pillow = "*"
 pandas = "*"
 openpyxl = "*"
+fpdf = "*"
 
 [dev-packages]
 

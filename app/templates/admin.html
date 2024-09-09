@@ -4,6 +4,9 @@
 
 <div>
     <h1 class="title is-1">Alumnos</h1>
+      <a class="button is-primary ml-6" href="excel/lista.xlsx">
+      <strong>Descargar lista en Excel</strong>
+      </a>
     <hr>
     <div id="table"></div>
 </div>
@@ -14,6 +17,7 @@
         { id: 'nombres', name: 'Nombre(s)' },
         { id: 'apellido_p', name: 'Apellido Paterno' },
         { id: 'apellido_m', name: 'Apellido Materno' },
+        { id: 'boleta', name: 'Boleta' },
         { id: 'fecha_nac', name: 'Fecha de Nacimiento' },
         { id: 'decanato', name: 'Decanato' },
         { id: 'parroquia', name: 'Parroquia' },
@@ -23,6 +27,8 @@
         { id: 'grado', name: 'Grado' },
         { id: 'boleta_carta', name: 'Boleta/Carta', sort: false },
         { id: 'servicio', name: 'Servicio Activo', sort: false },
+        { id: 'calificacion1', name: 'Calificación 1er. sem.', sort: false},
+        { id: 'calificacion2', name: 'Calificación 2o. sem.', sort: false},
       ],
       data: [
         {% for alumno in alumnos %}
@@ -31,23 +37,38 @@
             nombres: '{{ alumno.nombres }}',
             apellido_p: '{{ alumno.apellido_p }}',
             apellido_m: '{{ alumno.apellido_m }}',
+            boleta: gridjs.html('<a href="#" onclick="descargar_boleta(\'{{alumno.nombres ~ ' ' ~ alumno.apellido_p ~ ' ' ~ alumno.apellido_m}}\', \'{{alumno.decanato}}\', \'{{alumno.parroquia}}\', {{alumno.grado}}, {{alumno.calificacion1}}, {{alumno.calificacion2}})">Descargar</a>'),
             fecha_nac: "{{ alumno.dia_nac ~ '-' ~ alumno.mes_nac ~ '-' ~ alumno.año_nac }}",
             decanato: '{{ alumno.decanato }}',
             parroquia: '{{ alumno.parroquia }}',
             telefono: '{{ alumno.telefono }}',
             correo: '{{ alumno.correo }}',
             {% if alumno.foto != 'none' %}
-            foto: gridjs.html("<a href={{ url_for('fotos_admin', filename=basename(alumno.foto)) }}>Foto</a>"),
+            foto: gridjs.html(
+              "<a href={{ url_for('fotos_admin',filename=basename(alumno.foto)) }}>Foto</a>"),
             {% else %}
             foto: '',
             {% endif %}
             grado: "{{ alumno.grado }}",
             {% if alumno.boleta_carta != 'none' %}
-            boleta_carta: gridjs.html("<a href={{ url_for('boletas_admin', filename=basename(alumno.boleta_carta)) }}>B/C</a>"),
+            boleta_carta: gridjs.html(
+              "<a href={{ url_for('boletas_admin', filename=basename(alumno.boleta_carta)) }}>B/C</a>"),
             {% else %}
             boleta_carta: '',
             {% endif %}
             servicio: "{{ alumno.servicio }}",
+            calificacion1: gridjs.html('<select name="cal1{{alumno.id}}" \
+              id="c1" oninput="cambia_calificacion({{alumno.id}}, 1, this.value)">\
+              <option value="0" {% if alumno.calificacion1 == 0 %} selected {% endif %}>\
+              </option><option value="1" {% if alumno.calificacion1 == 1 %} selected {% endif %}>\
+                ACREDITADO</option>\
+              <option value="2"{% if alumno.calificacion1 == 2 %} selected {% endif %}>NO ACREDITADO</option></select>'),
+          calificacion2: gridjs.html('<select name="cal2{{alumno.id}}" \
+              id="c2" oninput="cambia_calificacion({{alumno.id}}, 2, this.value)">\
+              <option value="0" {% if alumno.calificacion2 == 0 %} selected {% endif %}>\
+              </option><option value="1" {% if alumno.calificacion2 == 1 %} selected {% endif %}>\
+                ACREDITADO</option>\
+              <option value="2"{% if alumno.calificacion2 == 2 %} selected {% endif %}>NO ACREDITADO</option></select>'),
           },
         {% endfor %}
       ],
@@ -59,6 +80,46 @@
         buttonsCount: 15,
       }
     }).render(document.getElementById('table'));
+
+    async function cambia_calificacion(alumno_id, semestre, calificacion){
+      const response = await fetch('/cambia-calificacion', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json; charset=utf-8'},
+        body: JSON.stringify({
+          alumno_id: alumno_id,
+          semestre: semestre,
+          calificacion: calificacion
+        })
+      })
+    }
+
+    async function descargar_boleta(nombre, decanato, parroquia, grado, 
+                                    calificacion1, calificacion2){
+      const response = await fetch('/descargar-boleta', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json; charset=utf-8'},
+        body: JSON.stringify({
+          nombre: nombre,
+          decanato: decanato,
+          parroquia: parroquia,
+          grado: grado,
+          calificacion1: calificacion1,
+          calificacion2: calificacion2,
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch products pdf');
+      }
+
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = objectUrl;
+      link.download = nombre + '.pdf';
+      link.click();
+      URL.revokeObjectURL(objectUrl);
+    }
 </script>
 
 

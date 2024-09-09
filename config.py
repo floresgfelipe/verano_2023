@@ -13,7 +13,8 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     MAX_CONTENT_LENGTH = 10 * 1024 * 1024
     UPLOAD_EXTENSIONS = ['.jpg', '.png', '.gif']
-    UPLOAD_PATH_BOLETAS = os.path.join(basedir, 'u', 'boletas')
+    PATH_BOLETAS = os.path.join(basedir, 'u', 'boletas')
+    IMG_BOLETAS = os.path.join(basedir, 'u', 'boletas', 'pics')
     UPLOAD_PATH_FOTOS = os.path.join(basedir, 'u', 'fotos')
     UPLOAD_PATH_FOTOS_EV = os.path.join(basedir, 'u', 'fotos_ev')
     EXCEL_PATH = os.path.join(basedir, 'excel')

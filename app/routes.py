@@ -12,10 +12,13 @@ from flask import (
     redirect,
     url_for,
     abort,
-    send_from_directory
+    send_from_directory,
+    send_file,
 )
 from flask_login import current_user, login_user, logout_user
 from app.models import Alumno, Admin, Evangelizador
+from app.to_xlsx import alumnos_to_excel
+from app.genera_boletas import create_pdf
 from app.forms import (
     LoginForm,
     RegisterForm, 
@@ -60,6 +63,20 @@ def login_required_evangelizador(f):
         return f(*args, **kwargs)
     return decorated_function
 
+@app.route('/cambia-calificacion', methods=['POST'])
+@login_required_admin
+def cambia_calificacion():
+    data = request.get_json()
+    alumno = Alumno.query.get(int(data['alumno_id']))
+
+    if data['semestre'] == 1:
+        alumno.calificacion1 = data['calificacion']
+    elif data['semestre'] == 2:
+        alumno.calificacion2 = data['calificacion']
+
+    db.session.commit()
+
+    return data
 
 @app.route('/')
 @app.route('/index')
@@ -410,3 +427,26 @@ def fotos_admin_ev(filename):
 def boletas_admin(filename):
     return send_from_directory(app.config['UPLOAD_PATH_BOLETAS'], filename)
 
+@app.route('/excel/<filename>')
+@login_required_admin
+def send_excel(filename):
+    alumnos_to_excel(filename)
+    return send_from_directory(app.config['EXCEL_PATH'], filename)
+
+@app.route('/descargar-boleta', methods=['POST'])
+@login_required_admin
+def descargar_boleta():
+    data = request.get_json()
+    c1 = "ACREDITADO" if data['calificacion1'] == 1 else "NO ACREDITADO" if data['calificacion1'] == 2 else ''
+    c2 = "ACREDITADO" if data['calificacion2'] == 1 else "NO ACREDITADO" if data['calificacion2'] == 2 else ''
+
+    return send_file(
+        create_pdf(
+        nombre=data['nombre'], 
+        parroquia=data['parroquia'], 
+        decanato=data['decanato'], 
+        grado=str(data['grado']),
+        calificacion1=c1,
+        calificacion2=c2,
+        )
+    )
