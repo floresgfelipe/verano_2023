@@ -21,12 +21,12 @@ def alumno_to_dict(alumno):
 
     rt_dict['Parroquia'] = str(alumno.parroquia)
 
-    rt_dict['Teléfono'] = int(alumno.telefono.replace(" ", ""))
+    rt_dict['Teléfono'] = str(alumno.telefono).replace(" ", "")
 
     rt_dict['Correo'] = str(alumno.correo)
 
     rt_dict['Grado'] = alumno.get_grado()
-
+    """
     if alumno.foto != 'none':
         rt_dict['Foto'] = ('https://catequesisver.org/fotos_admin/' 
                             + os.path.basename(alumno.foto))
@@ -38,7 +38,21 @@ def alumno_to_dict(alumno):
                                 + os.path.basename(alumno.boleta_carta))
     else:
         rt_dict['Boleta o Carta'] = 'NO DISPONIBLE'
+    """
 
+    if alumno.calificacion1 == 1:
+        rt_dict['Calificación 1er. sem.'] = "ACREDITADO"
+    elif alumno.calificacion1 == 2:
+        rt_dict['Calificación 1er. sem.'] = "NO ACREDITADO"
+    else:
+        rt_dict['Calificación 1er. sem.'] = ""
+
+    if alumno.calificacion2 == 1:
+        rt_dict['Calificación 2o. sem.'] = "ACREDITADO"
+    elif alumno.calificacion2 == 2:
+        rt_dict['Calificación 2o. sem.'] = "NO ACREDITADO"
+    else:
+        rt_dict['Calificación 2o. sem.'] = ""    
     return rt_dict
 
 def evangelizador_to_dict(evangelizador):
@@ -57,7 +71,7 @@ def evangelizador_to_dict(evangelizador):
 
     rt_dict['Parroquia'] = str(evangelizador.parroquia)
 
-    rt_dict['Teléfono'] = int(evangelizador.telefono.replace(" ", ""))
+    rt_dict['Teléfono'] = str(evangelizador.telefono)
 
     rt_dict['Correo'] = str(evangelizador.correo)
 
@@ -89,7 +103,7 @@ def split_primero():
         c += 1
 """
 
-def alumnos_to_excel():
+def alumnos_to_excel(filename):
     alumnos = Alumno.query.all()
     lista_al = [alumno_to_dict(alumno) for alumno in alumnos]
     df = pd.DataFrame(lista_al)
@@ -110,7 +124,7 @@ def alumnos_to_excel():
     lista_4o = [alumno_to_dict(alumno) for alumno in alumnos_4o]
     df4 = pd.DataFrame(lista_4o)
     
-    filename = os.path.join(app.config['EXCEL_PATH'], 'lista.xlsx')
+    filename = os.path.join(app.config['EXCEL_PATH'], filename)
     writer = pd.ExcelWriter(filename)
 
     df.to_excel(writer, sheet_name='General', index=False)

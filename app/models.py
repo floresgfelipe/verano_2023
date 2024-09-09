@@ -24,24 +24,8 @@ class Alumno(UserMixin, db.Model):
     grado = db.Column(db.Integer, nullable=False)
     boleta_carta = db.Column(db.String(200), nullable=False, default='none')
     servicio = db.Column(db.String(2), nullable=False)
-    calificacion1 = db.Column(db.Integer, default=-1)
-    calificacion2 = db.Column(db.Integer, default=-1)
-
-    def get_calificacion_primer_semestre(self):        
-        if self.calificacion1 == 0:
-            return REPROBADO
-        elif self.calificacion1 == 1:
-            return APROBADO
-        else:
-            return 'NO DISPONIBLE'
-
-    def get_calificacion_segundo_semestre(self):
-        if self.calificacion2 == 0:
-            return REPROBADO
-        elif self.calificacion2 == 1:
-            return APROBADO
-        else:
-            return 'NO DISPONIBLE'
+    calificacion1 = db.Column(db.Integer, default=0)
+    calificacion2 = db.Column(db.Integer, default=0)
     
     def get_grado(self):
         if self.grado == 1:
@@ -72,24 +56,8 @@ class Evangelizador(UserMixin, db.Model):
     telefono = db.Column(db.String(10), nullable=False)    
     correo = db.Column(db.String(50), nullable=False)
     foto = db.Column(db.String(200), nullable=False, default='none')
-    calificacion1 = db.Column(db.Integer, default=-1)
-    calificacion2 = db.Column(db.Integer, default=-1)
-
-    def get_calificacion_primer_semestre(self):        
-        if self.calificacion1 == 0:
-            return REPROBADO
-        elif self.calificacion1 == 1:
-            return APROBADO
-        else:
-            return 'NO DISPONIBLE'
-
-    def get_calificacion_segundo_semestre(self):
-        if self.calificacion2 == 0:
-            return REPROBADO
-        elif self.calificacion2 == 1:
-            return APROBADO
-        else:
-            return 'NO DISPONIBLE'
+    calificacion1 = db.Column(db.Integer, default=0)
+    calificacion2 = db.Column(db.Integer, default=0)
     
     def __repr__(self) -> str:
         return f'<Evangelizador {self.id} {self.nombres} \
